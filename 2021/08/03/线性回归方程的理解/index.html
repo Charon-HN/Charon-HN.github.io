@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Charon-HN">
+    
+    <title>
+        
+            线性回归方程的理解 |
+        
+        My blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#00CCCC","avatar":"/images/keji.png","favicon":"/images/favicon.ico","article_img_align":"center","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Change the world with code & Change life with music"},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                My blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">线性回归方程的理解</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/keji.png">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">Charon-HN</span>
+                        
+                            <span class="author-label">Lv1</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2021-08-03 09:57:47
+    </span>
+    
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.2k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>4 Mins</span>
+        </span>
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>什么是一元线性回归方程呢？<a class="link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/45149297" >这篇文章<i class="fas fa-external-link-alt"></i></a>提出了概念，并且还利用正态分布与cost function的表达式的关系。</p>
+<p>文中引言也通俗地提出了什么是回归——本质上就是确定一种<strong>非确定的关系</strong>。</p>
+<blockquote>
+<p>任何一个合格的大学生，都肯定在高中数学的《选修2-3》中接触过回归(regression)，在那个时候我们就知道，回归分析就是给了一些数据点，根据这些数据点画一条直线，然后我们就根据这条直线去做预测。所有学统计的人也应该都会有一种感觉，就是说，统计一定程度上，<strong>破坏了数学的严谨性</strong>。出现这一条鄙视链的原因是，统计研究的是一种<strong>非确定性关系</strong>。</p>
+<p>作为一个学数学的人，在没接触统计学之前，最烦的就是“不确定”。一加一等于几，你不能说它又是2，又是3。抽象一层来说，就有点“函数”的意思。在初中第一次接触函数就知道，给定一个自变量 <code>x</code> ，你必须要告诉我确定的<code>y</code> 是多少。这就是<strong>确定性关系</strong>。它不打马虎眼的，结果是确定的。</p>
+<p>那么为什么说统计“不严谨”呢？比方说你研究一个人身高与体重的联系，这个时候，你告诉我一个人的身高<code>x</code> ，我是没有办法告诉你一个确定的体重<code>y</code> 的。出现这样的问题的原因归因于<strong>世界的概率和未知</strong>。换句话说，世界上任何一个事情，都是有自己的<strong>概率分布</strong>的。比如说”太阳不可能从西边升起”这句话，实际上暗含的意思是“太阳从西边升起的概率为0”（当然细究一下这句话确实也不够严谨，因为概率为0并不代表不会发生)。所以只能说使用统计去找到某一个“最有可能发生的地方”，然后认为这个“概率最大”的地方就是我们要的结果。比如说我告诉你我身高是184cm，那么通过统计，你可以认为我“最有可能”体重是75kg，那么一般来说，如果作预测，你可能就会说，你“预测”我是75kg。但是实际上不一定是75kg的。</p>
+<p>那么回归分析是怎么回事呢？如果我知道对于每一个 <code>x</code>都有一个确定的 <code>y</code>，那么就没统计什么事了。但是如果对于每一个<code>x</code>都有一个确定的<code>y</code>的<strong>概率分布</strong>，你就会发现坏事了。下面一个图展现了这个问题，也展现了具体的“非确定性关系”。</p>
+<img src="C:\Users\17212\AppData\Roaming\Typora\typora-user-images\image-20210731195718661.png" alt="image-20210731195718661" style="zoom:50%;" />
+
+<p>（对于每一个具体的x，都会有不同的概率分布，那么想给定一个确定的y就不可能了，因为在概率分布上的每一个值y都有可能是最终的结果。）</p>
+<p>为了勾勒出这种“非确定性关系”，我们引入了<strong>相关分析和回归分析</strong>。相关分析就是很单纯的，研究两个变量之间的关系。我当然可以认为两个变量都是随机变量。但是回归分析，是<strong>要研究因果关系的</strong>。要求给定的 <img src="https://www.zhihu.com/equation?tex=x" alt="[公式]"> ，也就是“原因”，要明确。这会引出我们之后说的<strong>回归分析的三大基本假设之一</strong>。而回归分析，本质上，就是把可能<strong>概率最大的点给找出来</strong>，然后画在图上。</p>
+</blockquote>
+<p>一开始我在想，为什么会有最小二乘法的应用，cost function可以去那么写，线性回归的依据又是什么……；</p>
+<p>现在我可以想到的假设就是，依据<a class="link"   target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26614750" >极大似然估计<i class="fas fa-external-link-alt"></i></a>可以构建出一个参数未知数学模型;</p>
+<p>什么要假定为“正态分布”呢？除去正态分布的满足的比较好的一些性质以外，还有一个考虑是，它让回归<strong>“有办法”能够捕获到“概率最大”的点</strong>。下面的图就说明了这一点。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-1f6f32f3678b43886f89d2b6cac0f9b5_720w.jpg" alt="img"></p>
+<p>因为正态分布的期望值就正好落在最高处，也就是说，我们要求的E(y|x)对应的那个x值就正好是概率最大的点，符合我们的预期。（我记得看过一篇文章，文中说到依据<strong>大数定律</strong>，而正态分布又是生活中常见的一种模型）</p>
+<p>依据概率论的知识，我们将自己预测的模型(其实我感觉就是概率密度的相乘，即P(x|$\theta$))相乘，因为这是概率的结果相乘，我们需要让结果尽可能的大，那就需要求导即可了。</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2021/08/03/Git/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Git笔记</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/08/03/hello-world/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Hello World</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>&nbsp;-&nbsp;
+            
+            2021&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">Charon-HN</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
